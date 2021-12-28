@@ -5,12 +5,14 @@ from cal_return import cal_return
 def main():
     st.title("CHIKN Return Calculator")
     level = st.sidebar.number_input("Chicken Level", min_value=1, max_value=45)
-    sim_days = st.sidebar.number_input("Sim Days", min_value=1, max_value=1000)
+    sim_days = st.sidebar.number_input(
+        "Sim Days", min_value=1, max_value=1000, value=100
+    )
     chicken_price = st.sidebar.number_input(
-        "Chicken Price [USDT]", min_value=0.0, step=0.001, format="%.03f"
+        "Chicken Price [USDT]", min_value=0.0, step=0.001, format="%.03f", value=400.0
     )
     egg_price = st.sidebar.number_input(
-        "Egg Price [USDT]", min_value=0.0, step=0.001, format="%.03f"
+        "Egg Price [USDT]", min_value=0.0, step=0.001, format="%.03f", value=2.5
     )
     if st.sidebar.button("Calculate"):
         results = cal_return(
