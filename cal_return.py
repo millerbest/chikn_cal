@@ -22,7 +22,7 @@ def get_chicken(base_price: float, level: int):
     return Chicken(base_price=base_price, level=level)
 
 
-def get_egg_stack(staked_eggs: float = 0):
+def get_egg_stake(staked_eggs: float = 0):
     return EggStake(staked_eggs=staked_eggs)
 
 
@@ -35,11 +35,11 @@ def cal_return(
     level: int,
     egg_price: float,
     sim_days: int,
-    egg_stake: float = 0,
+    init_egg_stake: float = 0,
     feeds_amount: float = 0,
 ):
     chicken = get_chicken(base_price=base_price, level=level)
-    egg_stake = get_egg_stack(staked_eggs=egg_stake)
+    egg_stake = get_egg_stake(staked_eggs=init_egg_stake)
     feeds = get_feeds(amount=feeds_amount)
 
     results = RESULT_TEMPLATE.copy()
@@ -62,7 +62,9 @@ def cal_return(
                             egg_stake.staked_eggs,
                             feeds.amount,
                             egg_stake.staked_eggs * egg_price * 0.916667,
-                            egg_stake.staked_eggs * egg_price * 0.916667 - base_price,
+                            egg_stake.staked_eggs * egg_price * 0.916667
+                            - base_price
+                            - init_egg_stake * egg_price,
                         ]
                     ],
                     columns=[
