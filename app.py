@@ -1,5 +1,5 @@
 import streamlit as st
-from cal_return import cal_return
+from cal_return import cal_return, get_eggs_plot, get_gain_loss_plot, get_level_plot
 
 
 def main():
@@ -23,7 +23,21 @@ def main():
             init_egg_stake=invested_eggs,
             sim_days=sim_days,
         )
-        st.write(results, width=1500)
+        with st.expander("Gain/Loss"):
+            fig_gain_loss = get_gain_loss_plot(results=results)
+            st.plotly_chart(fig_gain_loss)
+
+        with st.expander("Levels"):
+            fig_levels = get_level_plot(results=results)
+            st.plotly_chart(fig_levels)
+
+        with st.expander("Eggs"):
+            fig_stacked_eggs = get_eggs_plot(results=results)
+            st.plotly_chart(fig_stacked_eggs)
+
+        csv = results.to_csv(index=False)
+        st.download_button("Export CSV", csv, "chiken_returns.csv", mime="csv")
+        st.dataframe(results, width=1500, height=500)
 
 
 if __name__ == "__main__":

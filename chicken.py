@@ -16,8 +16,6 @@ class Chicken:
     base_price: float  # the price for the chicken in USDT
     level: int  # the weight of the chicken
     feeding_progress: int = 0  # how much the chicken has been feeded
-    # max_feed: int = field(init=False)
-    # egg_per_day: float = field(init=False)
 
     @property
     def egg_per_day(self) -> float:

@@ -1,10 +1,12 @@
 """The function that calculates the returns"""
 
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
+from plotly.graph_objects import Figure
 from chicken import Chicken
 from egg_stake import EggStake
 from feeds import Feeds
+import numpy as np
 
 RESULT_TEMPLATE = pd.DataFrame(
     columns=[
@@ -79,11 +81,113 @@ def cal_return(
             ),
             ignore_index=True,
         )
-
     return results
 
 
-def get_plot(results: pd.DataFrame):
-    """Plot the figure"""
-    fig = px.line(data_frame=results, x="Days", y="Gain/Loss [USDT]")
+def plot_formatter(
+    x: pd.Series, y: pd.Series, fig: Figure, title: str, xlabel: str, ylabel: str
+):
+    fig.update_layout(
+        title=title,
+        xaxis_title=xlabel,
+        xaxis=dict(
+            tickmode="linear",
+            tick0=0,
+            dtick=round(
+                (np.max(x) - np.min(x)) / 20,
+                -len(str(int((np.max(x) - np.min(x)) / 20))) + 1,
+            ),
+        ),
+        yaxis_title=ylabel,
+        yaxis=dict(
+            tickmode="linear",
+            dtick=round(
+                (np.max(y) - np.min(y)) / 10,
+                -len(str(int((np.max(y) - np.min(y)) / 10))) + 1,
+            ),
+        ),
+        font=dict(family="Segoe UI, Arial", size=16),
+        showlegend=False,
+        hovermode="x",
+    )
     return fig
+
+
+def get_gain_loss_plot(results: pd.DataFrame):
+    """Plot the gain/loss figure"""
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=results["Days"],
+            y=results["Gain/Loss [USDT]"],
+            line={"color": "green"},
+            hoverinfo="skip",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=results["Days"],
+            y=results["Gain/Loss [USDT]"].where(results["Gain/Loss [USDT]"] >= 0),
+            line={"color": "green"},
+            name="Gain",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=results["Days"],
+            y=results["Gain/Loss [USDT]"].where(results["Gain/Loss [USDT]"] <= 0),
+            line={"color": "red"},
+            name="Loss",
+        )
+    )
+    fig = plot_formatter(
+        x=results.Days,
+        y=results["Gain/Loss [USDT]"],
+        fig=fig,
+        title="Predicted Gain/Loss",
+        xlabel="Days",
+        ylabel="Gain/Loss [USDT]",
+    )
+    return fig
+
+
+def get_level_plot(results: pd.DataFrame):
+    """Plot the level figure"""
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=results["Days"], y=results["Level"], line={"color": "black"}, name="Level"
+        )
+    )
+    fig = plot_formatter(
+        x=results.Days,
+        y=results.Level,
+        fig=fig,
+        title="Chicken Level (Weight in KG)",
+        xlabel="Days",
+        ylabel="Level (Weight in KG)",
+    )
+    return fig
+
+
+def get_eggs_plot(results: pd.DataFrame):
+    """Plot the level figure"""
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=results["Days"],
+            y=results["Staked Eggs"],
+            line={"color": "black"},
+            name="Staked Eggs",
+        )
+    )
+    fig = plot_formatter(
+        x=results.Days,
+        y=results["Staked Eggs"],
+        fig=fig,
+        title="Chicken Level (Weight in KG)",
+        xlabel="Days",
+        ylabel="Staked Eggs",
+    )
+    return fig
+
