@@ -185,9 +185,16 @@ def get_eggs_plot(results: pd.DataFrame):
         x=results.Days,
         y=results["Staked Eggs"],
         fig=fig,
-        title="Chicken Level (Weight in KG)",
+        title="Staked Eggs",
         xlabel="Days",
         ylabel="Staked Eggs",
     )
     return fig
+
+
+def get_payback_days(results: pd.DataFrame) -> int:
+    """Get the number of payback days"""
+    return results.loc[
+        [results.loc[results["Gain/Loss [USDT]"] > 0, "Gain/Loss [USDT]"].idxmin()]
+    ].Days.to_list()[0]
 
