@@ -194,7 +194,9 @@ def get_eggs_plot(results: pd.DataFrame):
 
 def get_payback_days(results: pd.DataFrame) -> int:
     """Get the number of payback days"""
-    return results.loc[
-        [results.loc[results["Gain/Loss [USDT]"] > 0, "Gain/Loss [USDT]"].idxmin()]
-    ].Days.to_list()[0]
-
+    try:
+        return results.loc[
+            [results.loc[results["Gain/Loss [USDT]"] > 0, "Gain/Loss [USDT]"].idxmin()]
+        ].Days.to_list()[0]
+    except ValueError:
+        return -1

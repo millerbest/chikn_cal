@@ -32,11 +32,16 @@ def show_results(
         sim_days=sim_days,
     )
     payback_days = get_payback_days(results)
-
-    st.markdown(
-        f"**Payback in <font color='green'>{payback_days}</font> days**",
-        unsafe_allow_html=True,
-    )
+    if payback_days != -1:
+        st.markdown(
+            f"**Payback in <font color='green'>{payback_days}</font> days**",
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            f"**<font color='red'>Please use larger sim days</font>**",
+            unsafe_allow_html=True,
+        )
     with st.expander("Gain/Loss"):
         fig_gain_loss = get_gain_loss_plot(results=results)
         st.plotly_chart(fig_gain_loss)
