@@ -22,4 +22,4 @@ def get_egg_price() -> float:
         ).text
         return float(price.split("$")[1])
     except WebDriverException:
-        return 5
+        return 5.0
