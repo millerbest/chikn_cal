@@ -1,15 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 # Later put into config file
-CHROME_DRIVER = r"./drivers/chromedriver.exe"
 EGG_URL = "https://dexscreener.com/avalanche/0xb2ff0817ad078c92c3afb82326592e06c92581b8"
 
 
 def get_egg_price() -> float:
     options = Options()
     options.add_argument("--headless")
-    driver = webdriver.Chrome(executable_path=CHROME_DRIVER, options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     driver.get(EGG_URL)
     driver.implicitly_wait(5)
     price = driver.find_element(
