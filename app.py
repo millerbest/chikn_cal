@@ -6,6 +6,7 @@ from cal_return import (
     get_level_plot,
     get_payback_days,
 )
+from egg_price import get_egg_price
 
 HIDE_STREAMLIT_STYLE = """
 <style>
@@ -71,7 +72,11 @@ def main():
     )
     invested_eggs = st.sidebar.number_input("Initial Invested Eggs", min_value=0)
     egg_price = st.sidebar.number_input(
-        "Egg Price [USDT]", min_value=0.0, step=0.001, format="%.03f", value=3.0
+        "Egg Price [USDT]",
+        min_value=0.0,
+        step=0.001,
+        format="%.03f",
+        value=get_egg_price(),
     )
 
     if st.sidebar.button("Calculate"):
