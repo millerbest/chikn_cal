@@ -31,7 +31,3 @@ class Chicken:
             self.feeding_progress -= self.max_feed
             self.level += 1
         return
-
-
-if __name__ == "__main__":
-    chicken = Chicken(base_price=100, level=1)

@@ -6,4 +6,3 @@ Currently it only supports one simple strategy: Staking all eggs every, and feed
 
 ## TO DO:
     - Add more strategies (e.g., sell eggs instead of staking them, sell feeds instead of feed the chicken, etc..)
-    - Support simulation with multiple chickens

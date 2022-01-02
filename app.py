@@ -1,3 +1,5 @@
+from typing import List
+import pandas as pd
 import streamlit as st
 from cal_return import (
     cal_return,
@@ -18,16 +20,16 @@ footer {visibility: hidden;}
 
 
 def show_results(
-    chicken_price: float,
-    level: int,
+    chicken_prices: List[float],
+    levels: List[int],
     egg_price: float,
     invested_eggs: float,
     sim_days: int,
 ) -> None:
 
     results = cal_return(
-        base_price=chicken_price,
-        level=level,
+        base_prices=chicken_prices,
+        levels=levels,
         egg_price=egg_price,
         init_egg_stake=invested_eggs,
         sim_days=sim_days,
@@ -60,16 +62,53 @@ def show_results(
     st.dataframe(results, width=1500, height=500)
 
 
+def show_chicken():
+    try:
+        df = pd.read_csv("temp_chicken.csv", names=["Level", "Price"])
+        df.index += 1
+        st.markdown("**Chickens:**")
+        st.dataframe(df)
+    except pd.errors.EmptyDataError:
+        st.markdown("**Chickens:**")
+        st.dataframe(pd.DataFrame(columns=["Level", "Price"]))
+    return
+
+
 def main():
     st.markdown(HIDE_STREAMLIT_STYLE, unsafe_allow_html=True)
     st.title("CHIKN Return Calculator")
-    level = st.sidebar.number_input("Chicken Level", min_value=1, max_value=100)
+
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        level = st.number_input(
+            "Chicken Level", min_value=1, max_value=100, key="level1"
+        )
+    with col2:
+        price = st.number_input(
+            "Chicken Price [USDT]",
+            min_value=0.0,
+            step=1.0,
+            format="%.1f",
+            value=400.0,
+            key="price_1",
+        )
+
+    col3, col4 = st.sidebar.columns(2)
+    with col3:
+        if st.button("Add"):
+            with open("temp_chicken.csv", "a") as f:
+                f.write(f"{level},{price}\n")
+
+    with col4:
+        if st.button("Clear"):
+            with open("temp_chicken.csv", "w") as f:
+                pass
+    show_chicken()
+
     sim_days = st.sidebar.number_input(
         "Sim Days", min_value=1, max_value=1000, value=100
     )
-    chicken_price = st.sidebar.number_input(
-        "Chicken Price [USDT]", min_value=0.0, step=0.001, format="%.03f", value=400.0
-    )
+
     invested_eggs = st.sidebar.number_input("Initial Invested Eggs", min_value=0)
     egg_price = st.sidebar.number_input(
         "Egg Price [USDT]",
@@ -80,9 +119,12 @@ def main():
     )
 
     if st.sidebar.button("Calculate"):
+        df = pd.read_csv("temp_chicken.csv", names=["Level", "Price"])
+        chicken_prices = df.Price.to_list()
+        chicken_levels = df.Level.to_list()
         show_results(
-            chicken_price=chicken_price,
-            level=level,
+            chicken_prices=chicken_prices,
+            levels=chicken_levels,
             egg_price=egg_price,
             invested_eggs=invested_eggs,
             sim_days=sim_days,

@@ -5,7 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 # Later put into config file
-EGG_URL = "https://dexscreener.com/avalanche/0xb2ff0817ad078c92c3afb82326592e06c92581b8"
+EGG_URL = "https://dexscreener.com/avalanche/0x3052a75dfd7a9d9b0f81e510e01d3fe80a9e7ec7"
 
 
 def get_egg_price() -> float:
@@ -23,3 +23,7 @@ def get_egg_price() -> float:
         return float(price.split("$")[1])
     except WebDriverException:
         return 5.0
+
+
+if __name__ == "__main__":
+    print(get_egg_price())
