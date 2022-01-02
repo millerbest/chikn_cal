@@ -76,6 +76,14 @@ def show_chicken():
 
 def main():
     st.markdown(HIDE_STREAMLIT_STYLE, unsafe_allow_html=True)
+    st.markdown(
+        """
+    <style>
+    section[data-testid="stSidebar"] .css-ng1t4o {{width: 24rem;}}
+    </style>
+""",
+        unsafe_allow_html=True,
+    )
     st.title("CHIKN Return Calculator")
 
     col1, col2 = st.sidebar.columns(2)
