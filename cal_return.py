@@ -100,6 +100,8 @@ def cal_return(
         results["Staked Eggs"] * egg_price * 0.916667
         - sum(chicken.base_price for chicken in chickens)
     ) - init_egg_stake * egg_price
+    results.Days += 1
+    results.index += 1
     return results
 
 

@@ -2,12 +2,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
-
+import streamlit as st
 
 # Later put into config file
 EGG_URL = "https://dexscreener.com/avalanche/0x3052a75dfd7a9d9b0f81e510e01d3fe80a9e7ec7"
 
 
+@st.cache
 def get_egg_price() -> float:
     """Get the egg price using selenium, somehow it does not work with streamlit server"""
     try:

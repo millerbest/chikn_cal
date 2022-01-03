@@ -59,58 +59,52 @@ def show_results(
 
     csv = results.to_csv(index=False)
     st.download_button("Export CSV", csv, "chiken_returns.csv", mime="csv")
-    st.dataframe(results, width=1500, height=500)
+    st.dataframe(
+        results.style.format(
+            formatter={
+                "Staked Eggs": "{:.2f}",
+                "Feeds": "{:.2f}",
+                "Egg value [USDT]": "{:.2f}",
+                "Gain/Loss [USDT]": "{:.2f}",
+            }
+        ),
+        width=1500,
+        height=500,
+    )
 
 
 def show_chicken():
-    try:
-        df = pd.read_csv("temp_chicken.csv", names=["Level", "Price"])
-        df.index += 1
-        st.markdown("**Chickens:**")
-        st.dataframe(df)
-    except pd.errors.EmptyDataError:
-        st.markdown("**Chickens:**")
-        st.dataframe(pd.DataFrame(columns=["Level", "Price"]))
+    st.markdown("**Chickens:**")
+    df = pd.DataFrame(st.session_state["chicken"], columns=["Level", "Price"])
+    df.Level.astype("int64")
+    st.dataframe(df.style.format(formatter={"Price": "{:.2f}"}))
     return
 
 
 def main():
     st.markdown(HIDE_STREAMLIT_STYLE, unsafe_allow_html=True)
-    st.markdown(
-        """
-    <style>
-    section[data-testid="stSidebar"] .css-ng1t4o {{width: 24rem;}}
-    </style>
-""",
-        unsafe_allow_html=True,
-    )
     st.title("CHIKN Return Calculator")
+
+    if "chicken" not in st.session_state:
+        st.session_state["chicken"] = []
 
     col1, col2 = st.sidebar.columns(2)
     with col1:
-        level = st.number_input(
-            "Chicken Level", min_value=1, max_value=100, key="level1"
-        )
+        level = st.number_input("Chicken Level", min_value=1, max_value=100)
     with col2:
         price = st.number_input(
-            "Chicken Price [USDT]",
-            min_value=0.0,
-            step=1.0,
-            format="%.1f",
-            value=400.0,
-            key="price_1",
+            "Chicken Price [USDT]", min_value=0.0, step=1.0, format="%.1f", value=400.0
         )
 
     col3, col4 = st.sidebar.columns(2)
     with col3:
         if st.button("Add"):
-            with open("temp_chicken.csv", "a") as f:
-                f.write(f"{level},{price}\n")
+            st.session_state["chicken"].append((level, price))
 
     with col4:
         if st.button("Clear"):
-            with open("temp_chicken.csv", "w") as f:
-                pass
+            st.session_state["chicken"] = []
+
     show_chicken()
 
     sim_days = st.sidebar.number_input(
@@ -127,9 +121,7 @@ def main():
     )
 
     if st.sidebar.button("Calculate"):
-        df = pd.read_csv("temp_chicken.csv", names=["Level", "Price"])
-        chicken_prices = df.Price.to_list()
-        chicken_levels = df.Level.to_list()
+        chicken_levels, chicken_prices = zip(*st.session_state["chicken"])
         show_results(
             chicken_prices=chicken_prices,
             levels=chicken_levels,
